@@ -24,13 +24,20 @@ exports.Get = async function(request, response) {
 };
 
 
-exports.ReportWeek = function(request, response) {
+exports.ReportWeek = async function(request, response) {
 
     try {
         const dbo  = mongo.db("projectify");
-        dbo.collection("projects_report_week").insertOne(request.body).then(()=>{
-            response.status(200).json({"success": true, "message" : "register succesful"})
-        });
+
+        const validUser = await ValidUser(dbo, request.body)
+
+        if(!validUser){
+            dbo.collection("projects_report_week").insertOne(request.body).then(()=>{
+                response.status(200).json({"success": true, "message" : "register succesful"})
+            });
+        }else{
+            response.status(400).json({"success": false, "message" : "A user should not be able to report the same project-week twice."})
+        }
        
     }
      catch (error) {
@@ -41,6 +48,14 @@ exports.ReportWeek = function(request, response) {
         }
         response.status(400).json(data)
      }
+
+};
+
+
+const ValidUser = (dbo, {id_project, id_user, number_week}) => {
+   
+    return  dbo.collection("projects_report_week")
+                            .findOne({id_project, id_user, number_week})
 
 };
 
