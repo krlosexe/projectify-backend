@@ -14,7 +14,9 @@ Routes.use(function(req, res, next) {
 
 Routes.post('/api/auth', authController.Auth)
 Routes.get('/api/projects', middlewareJwt, projectsController.Get)
-Routes.post('/api/projects/report/week', middlewareJwt, projectsController.ReportWeek)
+Routes.post('/api/projects/report/week', middlewareJwt, projectsController.StoreReportWeek)
+Routes.get('/api/projects/report/week/:id_user', middlewareJwt, projectsController.GetByUserReportWeek)
+Routes.put('/api/projects/report/week/:id', middlewareJwt, projectsController.UpdateReportWeek)
 module.exports = Routes;
 
 

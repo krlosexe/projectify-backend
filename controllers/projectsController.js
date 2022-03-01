@@ -1,15 +1,28 @@
-const express         = require('express')
-const app             = express()
-const client_mongo    = require('@config/database')
-const mongo           = client_mongo()
-
+const {ProjectModel, ProjectReportWeekModel}  = require('@models')
 
 exports.Get = async function(request, response) {
-    
+
     try {
-        const dbo  = mongo.db("projectify");
-        
-        const result = await dbo.collection("projects").find({}).toArray()
+        const result = await ProjectModel.Get()
+        response.status(200).json(result)
+    }
+     catch (error) {
+        const link = `https://stackoverflow.com/search?q=${error.message}`
+        const data = {
+            "stackoverflow" : link,
+            "success"       : false
+        }
+        response.status(400).json(data)
+     }
+
+};
+
+
+exports.GetByUserReportWeek = async function(request, response) {
+    try {
+        const result = await ProjectReportWeekModel
+                             .GetByUser(request.params.id_user)
+                             
         response.status(200).json(result)
     }
      catch (error) {
@@ -24,19 +37,25 @@ exports.Get = async function(request, response) {
 };
 
 
-exports.ReportWeek = async function(request, response) {
+exports.StoreReportWeek = async function(request, response) {
 
     try {
-        const dbo  = mongo.db("projectify");
-
-        const validUser = await ValidUser(dbo, request.body)
+        const validUser = await ValidUser(request.body)
 
         if(!validUser){
-            dbo.collection("projects_report_week").insertOne(request.body).then(()=>{
-                response.status(200).json({"success": true, "message" : "register succesful"})
-            });
+            ProjectReportWeekModel.Store(request.body).then(()=>{
+                response.status(200).json(
+                    {
+                        "success": true, 
+                        "message" : "register succesful"
+                    }
+                )
+            })
         }else{
-            response.status(400).json({"success": false, "message" : "A user should not be able to report the same project-week twice."})
+            response.status(400).json({
+                    "success": false, 
+                    "message" : "A user should not be able to report the same project-week twice."
+            })
         }
        
     }
@@ -52,14 +71,36 @@ exports.ReportWeek = async function(request, response) {
 };
 
 
-const ValidUser = (dbo, {id_project, id_user, number_week}) => {
-   
-    return  dbo.collection("projects_report_week")
-                            .findOne({id_project, id_user, number_week})
+
+exports.UpdateReportWeek = async function(request, response) {
+
+    try {
+        var ObjectID  = require('mongodb').ObjectID; 
+        const where   = {"_id" : new ObjectID(request.params.id) }
+        var update    = { $set: request.body }
+
+        ProjectReportWeekModel.Update(where, update).then(()=>{
+            response.status(200).json(
+                {
+                    "success": true, 
+                    "message" : "update succesful"
+                }
+            )
+        })
+       
+    }
+     catch (error) {
+        const link = `https://stackoverflow.com/search?q=${error.message}`
+        const data = {
+            "stackoverflow" :  link,
+            "success"       : false
+        }
+        response.status(400).json(data)
+     }
 
 };
 
 
-
-
-
+const ValidUser = ({id_project, id_user, number_week}) => {
+    return ProjectReportWeekModel.ValidByUser({id_project, id_user, number_week})
+};

@@ -28,6 +28,7 @@
   "_moduleAliases": {
     "@api": "./api",
     "@controller": "./controllers",
+    "@models": "./models",
     "@config": "./config",
     "@middlewares" : "./middlewares"
   }

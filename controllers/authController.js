@@ -1,24 +1,18 @@
 const express         = require('express')
 const app             = express()
-const client_mongo    = require('@config/database')
 const jwt             = require('jsonwebtoken')
 const config          = require('@config/config')
-const mongo           = client_mongo()
+const {AuthModel}     = require('@models')
 
 app.set('key', config.key);
-
 
 exports.Auth = async function(request, response) {
 
     try {
-        const dbo   = mongo.db("projectify");
+       
+       const result = await AuthModel
+                            .Auth(request.body.email, request.body.password)
 
-        const where = {
-            "email"   : request.body.email,
-            "password" : request.body.password
-        }
-
-        const result = await dbo.collection("users").findOne(where)
         if(result){
             const token = GenerateToken()
             response.status(200).json({
@@ -30,7 +24,7 @@ exports.Auth = async function(request, response) {
         }
      }
      catch (error) {
-         const link = `https://stackoverflow.com/search?q=${error.message}`
+        const link = `https://stackoverflow.com/search?q=${error.message}`
         const data = {
             "stackoverflow" :  link,
             "success"       : false
@@ -39,7 +33,6 @@ exports.Auth = async function(request, response) {
      }
 
 };
-
 
 
 const GenerateToken = () =>{
