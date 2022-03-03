@@ -4,9 +4,8 @@ const mongo           = client_mongo()
 module.exports.ProjectReportWeekModel = {
     Store : (data) => {
         try {
-            
+            const    dbo  = mongo.db("projectify")
             return   dbo.collection("projects_report_week").insertOne(data)
-          
          }
          catch (error) {
             return null
@@ -27,7 +26,6 @@ module.exports.ProjectReportWeekModel = {
         try {
             const  dbo  = mongo.db("projectify")
             return dbo.collection("projects_report_week").find({id_user}).toArray()
-          
          }
          catch (error) {
             return null
@@ -39,7 +37,6 @@ module.exports.ProjectReportWeekModel = {
             const   dbo  = mongo.db("projectify")
             return  dbo.collection("projects_report_week")
                             .findOne(data)
-          
          }
          catch (error) {
             return null

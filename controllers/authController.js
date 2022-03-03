@@ -17,6 +17,8 @@ exports.Auth = async function(request, response) {
             const token = GenerateToken()
             response.status(200).json({
                 token,
+                "name": result.email,
+                "id_user": result._id,
                 "success" : true
             })
         }else{

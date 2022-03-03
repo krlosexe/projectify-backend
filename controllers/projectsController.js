@@ -22,7 +22,7 @@ exports.GetByUserReportWeek = async function(request, response) {
     try {
         const result = await ProjectReportWeekModel
                              .GetByUser(request.params.id_user)
-                             
+
         response.status(200).json(result)
     }
      catch (error) {
@@ -41,7 +41,7 @@ exports.StoreReportWeek = async function(request, response) {
 
     try {
         const validUser = await ValidUser(request.body)
-
+        console.log(validUser)
         if(!validUser){
             ProjectReportWeekModel.Store(request.body).then(()=>{
                 response.status(200).json(
@@ -77,7 +77,7 @@ exports.UpdateReportWeek = async function(request, response) {
     try {
         var ObjectID  = require('mongodb').ObjectID; 
         const where   = {"_id" : new ObjectID(request.params.id) }
-        var update    = { $set: request.body }
+        const update  = { $set: request.body }
 
         ProjectReportWeekModel.Update(where, update).then(()=>{
             response.status(200).json(

@@ -6,12 +6,13 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "seed" : "node ./migrations/seedersUsers.js"
+    "seed": "node ./migrations/seedersUsers.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -30,6 +31,6 @@
     "@controller": "./controllers",
     "@models": "./models",
     "@config": "./config",
-    "@middlewares" : "./middlewares"
+    "@middlewares": "./middlewares"
   }
 }
